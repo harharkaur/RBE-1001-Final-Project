@@ -18,7 +18,7 @@ left_motor = vex.Motor(vex.Ports.PORT1, True)
 right_motor = vex.Motor(vex.Ports.PORT2)
 arm_motor = vex.Motor(vex.Ports.PORT6)
 RED_BALL = vex.Signature (1, 7417, 8677, 8047, -879, -433, -656, 6.1, 0)
-BLUE_BALL = Signature(2, -2235, -1227, -1731, 6473, 9973, 8223, 3, 0)
+BLUE_BALL = vex.Signature(2, -2235, -1227, -1731, 6473, 9973, 8223, 3, 0)
 vision = vex.Vision(vex.Ports.PORT17, BLUE_BALL)
 
 
