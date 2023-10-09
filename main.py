@@ -12,14 +12,14 @@
 import vex
 import time
 
-#test1.1
 
 brain = vex.Brain()
 left_motor = vex.Motor(vex.Ports.PORT1, True)
 right_motor = vex.Motor(vex.Ports.PORT2)
 arm_motor = vex.Motor(vex.Ports.PORT6)
 RED_BALL = vex.Signature (1, 7417, 8677, 8047, -879, -433, -656, 6.1, 0)
-vision = vex.Vision(vex.Ports.PORT17, RED_BALL)
+BLUE_BALL = Signature(2, -2235, -1227, -1731, 6473, 9973, 8223, 3, 0)
+vision = vex.Vision(vex.Ports.PORT17, BLUE_BALL)
 
 
 drive_speed = 50
@@ -36,28 +36,28 @@ center_y_threshold = 50
 
 while True:
 
-    objects = vision.take_snapshot(RED_BALL)
+    objects = vision.take_snapshot(BLUE_BALL)
 
-    if objects:
+    if objects: 
 
-        red_ball = vision.largest_object
+        blue_ball = vision.largest_object
 
-        while abs(red_ball.centerX - camera_center_x) > center_x_threshold:
-            error = red_ball.centerX - camera_center_x
+        while abs(blue_ball.centerX - camera_center_x) > center_x_threshold:
+            error = blue_ball.centerX - camera_center_x
             effort = (error * turn_speed) / camera_width
             left_motor.spin(vex.REVERSE, effort, vex.VelocityUnits.RPM)
             right_motor.spin(vex.FORWARD, effort, vex.VelocityUnits.RPM)
             time.sleep(0.1)
-            vision.take_snapshot(RED_BALL)
-            red_ball = vision.largest_object
+            vision.take_snapshot(BLUE_BALL)
+            blue_ball = vision.largest_object
 
         left_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
         right_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
 
-        while (red_ball.centerY - camera_center_y) > center_y_threshold:
+        while (blue_ball.centerY - camera_center_y) > center_y_threshold:
             time.sleep(0.25)
-            vision.take_snapshot(RED_BALL)
-            red_ball = vision.largest_object
+            vision.take_snapshot(BLUE_BALL)
+            blue_ball = vision.largest_object
 
         left_motor.stop()
         right_motor.stop()
