@@ -19,7 +19,8 @@ left_motor = Motor(Ports.PORT1, True)
 right_motor = Motor(Ports.PORT2)
 arm_motor = Motor(Ports.PORT6)
 RED_BALL = Signature (1, 7417, 8677, 8047, -879, -433, -656, 6.1, 0)
-vision = Vision(Ports.PORT17, RED_BALL)
+BLUE_BALL = Signature()
+vision = Vision(Ports.PORT17, RED_BALL, BLUE_BALL)
 
 
 drive_speed = 50
@@ -36,9 +37,9 @@ center_y_threshold = 50
 
 while True:
 
-    objects = vision.take_snapshot(RED_BALL)
+    objects = vision.take_snapshot(RED_BALL || BLUE_BALL)
 
-    if objects:
+    if objects: 
 
         red_ball = vision.largest_object
 
