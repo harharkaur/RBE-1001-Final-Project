@@ -115,17 +115,17 @@
 # ---------------------------------------------------------------------------- #
 
 # Library imports
-from vex import *
+import vex
 import time
 
-brain = Brain()
-left_motor = Motor(Ports.PORT1, True)
-right_motor = Motor(Ports.PORT2)
-arm_motor = Motor(Ports.PORT6)
-pulley_motor = Motor(Ports.PORT10)
-RED_BALL = Signature (1, 7417, 8677, 8047, -879, -433, -656, 6.1, 0)
-BLUE_BALL = Signature(2, -2235, -1227, -1731, 6473, 9973, 8223, 3,0)
-vision = Vision(Ports.PORT17, 50, RED_BALL, BLUE_BALL)
+brain = vex.Brain()
+left_motor = vex.Motor(vex.Ports.PORT1, True)
+right_motor = vex.Motor(vex.Ports.PORT2)
+arm_motor = vex.Motor(vex.Ports.PORT6)
+pulley_motor = vex.Motor(vex.Ports.PORT10)
+RED_BALL = vex.Signature (1, 7417, 8677, 8047, -879, -433, -656, 6.1, 0)
+BLUE_BALL = vex.Signature(2, -2235, -1227, -1731, 6473, 9973, 8223, 3,0)
+vision = vex.Vision(vex.Ports.PORT17, 50, RED_BALL, BLUE_BALL)
 
 
 drive_speed = 70
@@ -208,36 +208,51 @@ target_width = 35
 #         left_motor.stop()
 #         right_motor.stop()
         
-
-line_follower_left = AnalogIn(Ports.PORT3)
-line_follower_right =  AnalogIn(Ports.PORT4)
+line_follower_center = vex.Line(vex.Triport.f)
+line_follower_left = vex.Line(vex.Triport.g)
+line_follower_right =  vex.Line(vex.Triport.h)
 
 # Set the threshold value
-threshold = 100
+threshold = 200
 
 # Wait for 2 seconds
-wait(2)
+time.sleep(2)
 
 # Main loop
 while True:
     # Read line follower sensor values
+    center_sensor_value = line_follower_center.value()
     left_sensor_value = line_follower_left.value()
     right_sensor_value = line_follower_right.value()
 
     # Display sensor values (optional)
-    print("Left: {}  Right: {}".format(left_sensor_value, right_sensor_value))
+    print(f"Left: {left_sensor_value}  Center: {center_sensor_value}  Right: {right_sensor_value}")
 
     # RIGHT sensor sees light:
-    if right_sensor_value < threshold:
+    if (right_sensor_value < threshold) and (left_sensor_value < threshold) and (center_sensor_value < threshold):
+        # Spin 90 degrees
+        left_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
+        right_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
+        time.sleep(2)
+        left_motor.stop()
+        right_motor.stop()
+        left_motor.spin_to_position(90, vex.RotationUnits.DEG, 63, vex.VelocityUnits.PCT, False)
+        right_motor.spin_to_position(-90, vex.RotationUnits.DEG, 63, vex.VelocityUnits.PCT, True)
+        left_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
+        right_motor.spin(vex.FORWARD, drive_speed, vex.VelocityUnits.RPM)
+        time.sleep(2)
+        left_motor.stop()
+        right_motor.stop()
+    elif right_sensor_value < threshold:
         # Counter-steer right
-        left_motor.spin(FORWARD, 63)
-        right_motor.spin(REVERSE, 0)
+        left_motor.spin(vex.FORWARD, 63)
+        right_motor.spin(vex.REVERSE, 0)
     # LEFT sensor sees light:
     elif left_sensor_value < threshold:
         # Counter-steer left
-        left_motor.spin(REVERSE, 0)
-        right_motor.spin(FORWARD, 63)
+        left_motor.spin(vex.REVERSE, 0)
+        right_motor.spin(vex.FORWARD, 63)
     else:
         # CENTER sensor sees light and goes forward 
-        left_motor.spin(FORWARD, 63)
-        right_motor.spin(FORWARD, 63)
+        left_motor.spin(vex.FORWARD, 63)
+        right_motor.spin(vex.FORWARD, 63)
